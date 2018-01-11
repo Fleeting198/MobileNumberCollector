@@ -6,20 +6,13 @@
 
 使用：打开MobileCollector.py，翻到文件最底部main部分，设置MobileCollector的参数，用命令行运行此脚本。或者在其他脚本中调用该类。
 
-支持的文件类型有xls, xlsx, xlsm, doc, docx, txt, htm, csv
-
-目前用桥接实现了其他处理方法的接口，可以增加提取身份证号或其他信息的实现类。
-
-Processors/AbstractProcessors中的类负责从各类型文件中读取数据到内存中，再调用ProcessorImpls处理数据。
-
-Processors/ProcessorImpls中的类负责对读取获得的数据做具体处理，如提取手机号。
-
-win32com要求Python 3.5 或3.6，如果环境中没有win32com，脚本也能正常运行，但会将所有doc和docx文件视为处理失败。
+支持的文件类型有xls, xlsx, xlsm, doc, docx, txt, htm, csv。
 
 读取docx文件依赖的docx库无法读取doc，目前的处理方式是先用win32com将doc另存为docx，完成后删除原doc文件，再统一处理。
+win32com运行期间不能手动打开word程序，否则运行中的脚本会抛出打开文件失败的错误，而且win32com无法多进程运行。
+win32com要求Python 3.5 或3.6，如果环境中没有win32com，脚本也能正常运行，但会将所有doc和docx文件视为处理失败。
 
-win32com运行期间不能手动打开word程序，否则运行中的脚本会抛出打开文件失败的错误，而且win32com无法多进程运行，处理doc文件是一大瓶颈。
-
+Processors/AbstractProcessors中的类负责从各类型文件中读取数据到内存中，再调用ProcessorImpls处理数据。Processors/ProcessorImpls中的类负责对读取获得的数据做具体处理
 
 ## MobileCollector.py
 
@@ -29,7 +22,7 @@ win32com运行期间不能手动打开word程序，否则运行中的脚本会�
 	MobileCollector(root_src, pro_type=0, full_core=False)
 
 *	root_src: 待处理文件根目录路径。
-*	pro_type: (可选)处理类型，如手机号(0)、身份证(1)。默认为手机号(0)。在ProcessorFactory的类属性中记录。
+*	pro_type: (可选)处理类型。手机号(0)(默认)、身份证(1)。
 *	full_core: (可选)多进程用一半核或全部核，默认一半核。
 
 调用process_files后，会在root_src同目录下新建名为complete, output, exception等文件夹，用于存储各种不同处理结果的文件。
